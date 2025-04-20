@@ -141,7 +141,6 @@ class LoadImageFromText:
     RETURN_TYPES = ("IMAGE","MASK")
     DESCRIPTION = cleandoc(__doc__ or "")
     FUNCTION = "load_image_from_text"
-
     CATEGORY = "RisuTools/image"
 
     def load_image_from_text(self, name, prefix, directory):
@@ -200,12 +199,106 @@ class LoadImageFromText:
         return m.digest().hex()
 
     @classmethod
-    def VALIDATE_INPUTS(cls, name, prefix, directory):
+    def validate_inputs(cls, name, prefix, directory):
         image_path = os.path.join(directory, prefix + name)
         if not os.path.exists(image_path):
-            return f"Invalid image file: {image_path}"
+            return f"invalid image file: {image_path}"
+        return True
+
+class LoadLastFileNamePrefix:
+    """
+    Loads the last filename containing the prefix in the directory
+
+    Class methods
+    -------------
+    INPUT_TYPES (dict):
+        Tell the main program input parameters of nodes.
+
+    Attributes
+    ----------
+    RETURN_TYPES (`tuple`):
+        The type of each element in the output tuple.
+    RETURN_NAMES (`tuple`):
+        The name of each output in the output tuple.
+    FUNCTION (`str`):
+        The name of the entry-point method.
+    CATEGORY (`str`):
+        The category the node should appear in the UI.
+    """
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        """
+            Return a dictionary which contains config for all input fields.
+            It is almost the same as LoadImage: https://github.com/comfyanonymous/ComfyUI/blob/fd274944418f1148b762a6e2d37efa820a569071/nodes.py#L1641
+        """
+        return {
+            "required": {
+                "prefix": ("STRING", {
+                    "multiline": False,
+                    "default": "prefix"
+                }),
+                "directory": ("STRING", {
+                    "multiline": False,
+                    "default": "absouute-path"
+                })
+            },
+        }
+
+    RETURN_TYPES = ("STRING")
+    DESCRIPTION = cleandoc(__doc__ or "")
+    FUNCTION = "load_filename"
+    CATEGORY = "RisuTools/File"
+
+    def load_filename(self, prefix, directory):
+        """
+        Find the most recent file in the directory that starts with the given prefix.
+
+        Parameters:
+        -----------
+        prefix : str
+            The prefix to search for in filenames
+        directory : str
+            The directory to search in
+
+        Returns:
+        --------
+        str
+            The filename (without path) of the most recent file with the prefix
+        """
+        matching_files = []
+
+        for filename in os.listdir(directory):
+            if filename.startswith(prefix):
+                file_path = os.path.join(directory, filename)
+                if os.path.isfile(file_path):
+                    matching_files.append((filename, os.path.getmtime(file_path)))
+
+        # Sort by modification time (newest last)
+        matching_files.sort(key=lambda x: x[1])
+
+        # Return just the filename (without the path)
+        return (matching_files[-1][0],)
+
+    @classmethod
+    def validate_inputs(cls, prefix, directory):
+        if not os.path.exists(directory):
+            return f"Directory does not exist: {directory}"
+
+        if not os.path.isdir(directory):
+            return f"Not a directory: {directory}"
+
+        matching_files = [f for f in os.listdir(directory) if f.startswith(prefix) and os.path.isfile(os.path.join(directory, f))]
+
+        if not matching_files:
+            return f"There is no matching file with prefix '{prefix}' in {directory}"
 
         return True
+
+
+
 
 
 
@@ -214,12 +307,14 @@ class LoadImageFromText:
 # NOTE: names should be globally unique
 NODE_CLASS_MAPPINGS = {
     "UUIDGenerator": UUIDGenerator,
-    "LoadImageFromText" : LoadImageFromText
+    "LoadImageFromText" : LoadImageFromText,
+    "LoadLastFileNamePrefix" : LoadLastFileNamePrefix
 }
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
     "UUIDGenerator": "UUID Generator",
-    "LoadImageFromText" : "Load Image From Text"
+    "LoadImageFromText" : "Load Image From Text",
+    "LoadLastFileNamePrefix" : "Load Last Filename from Prefix"
 }
 

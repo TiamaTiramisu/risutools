@@ -1,5 +1,3 @@
-from .nodes import UUIDGenerator, LoadImageFromText
-NODE_CLASS_MAPPINGS = {
-    "UUIDGenerator": UUIDGenerator,
-    "LoadImageFromText" : LoadImageFromText }
+from . import nodes
+NODE_CLASS_MAPPINGS = nodes.NODE_CLASS_MAPPINGS
 __all__ = ["NODE_CLASS_MAPPINGS"]
