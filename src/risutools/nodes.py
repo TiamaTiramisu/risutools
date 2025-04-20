@@ -199,7 +199,7 @@ class LoadImageFromText:
         return m.digest().hex()
 
     @classmethod
-    def validate_inputs(cls, name, prefix, directory):
+    def VALIDATE_INPUTS(cls, name, prefix, directory):
         image_path = os.path.join(directory, prefix + name)
         if not os.path.exists(image_path):
             return f"invalid image file: {image_path}"
@@ -283,7 +283,7 @@ class LoadLastFileNamePrefix:
         return (matching_files[-1][0],)
 
     @classmethod
-    def validate_inputs(cls, prefix, directory):
+    def VALIDATE_INPUTS(cls, prefix, directory):
         if not os.path.exists(directory):
             return f"Directory does not exist: {directory}"
 
