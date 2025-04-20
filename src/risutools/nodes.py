@@ -145,7 +145,7 @@ class LoadImageFromText:
     FUNCTION = "load_image_from_text"
     CATEGORY = "RisuTools/image"
 
-    def load_image_from_text(self, name, prefix, directory):
+    def load_image_from_text(self, name, directory, prefix = ""):
         if prefix == None: prefix = ""
         image_path = os.path.join(directory, prefix + name)
 
@@ -203,7 +203,7 @@ class LoadImageFromText:
         return m.digest().hex()
 
     @classmethod
-    def VALIDATE_INPUTS(cls, name, directory, prefix):
+    def VALIDATE_INPUTS(cls, name, directory, prefix = ""):
         if prefix == None: prefix = ""
         image_path = os.path.join(directory, prefix + name)
         if not os.path.exists(image_path):
@@ -259,7 +259,7 @@ class LoadLastFileNamePrefix:
     FUNCTION = "load_filename"
     CATEGORY = "RisuTools/File"
 
-    def load_filename(self, directory, prefix):
+    def load_filename(self, directory, prefix = ""):
         """
         Find the most recent file in the directory that starts with the given prefix.
 
@@ -294,7 +294,7 @@ class LoadLastFileNamePrefix:
         return (matching_files[-1][0],)
 
     @classmethod
-    def VALIDATE_INPUTS(cls, directory, prefix):
+    def VALIDATE_INPUTS(cls, directory, prefix = ""):
         if prefix == None: prefix = ""
         if not os.path.exists(directory):
             return f"Directory does not exist: {directory}"
@@ -357,7 +357,7 @@ class CheckFileNamePrefixExists:
     FUNCTION = "check_filename_exists"
     CATEGORY = "RisuTools/File"
 
-    def check_filename_exists(self, directory, prefix):
+    def check_filename_exists(self, directory, prefix = ""):
         """
         Check if any files with the given prefix exist in the directory.
 
@@ -386,7 +386,7 @@ class CheckFileNamePrefixExists:
         return (False,)
 
     @classmethod
-    def VALIDATE_INPUTS(cls, directory, prefix):
+    def VALIDATE_INPUTS(cls, directory, prefix = ""):
         if prefix == None: prefix = ""
         if not os.path.exists(directory):
             return f"Directory does not exist: {directory}"
