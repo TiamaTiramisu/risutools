@@ -1,14 +1,12 @@
 from inspect import cleandoc
-from typing import  Literal, NoReturn, assert_never
+from typing import  Literal
 import os
 import uuid
 import hashlib
 
 import numpy as np
-from PIL import Image, ImageOps, ImageSequence
-from PIL.PngImagePlugin import PngInfo
+from PIL import Image, ImageOps, ImageSequence, ImageFile, UnidentifiedImageError
 import torch
-from ComfyUI import folder_paths, node_helpers
 
 UUIDVersions = Literal["v1", "v3", "v4", "v5"]
 class UUIDGenerator:
@@ -79,6 +77,18 @@ class UUIDGenerator:
 
 
 
+def pillow(fn, arg):
+    prev_value = None
+    try:
+        x = fn(arg)
+    except (OSError, UnidentifiedImageError, ValueError): #PIL issues #4472 and #2445, also fixes ComfyUI issue #3416
+        prev_value = ImageFile.LOAD_TRUNCATED_IMAGES
+        ImageFile.LOAD_TRUNCATED_IMAGES = True
+        x = fn(arg)
+    finally:
+        if prev_value is not None:
+            ImageFile.LOAD_TRUNCATED_IMAGES = prev_value
+    return x
 
 class LoadImageFromText:
     """
@@ -121,7 +131,10 @@ class LoadImageFromText:
                     "multiline": False,
                     "default": "prefix"
                 }),
-                "directory": (["[input]", "[output]"], { "default" : "[output]" })
+                "directory": ("STRING", {
+                    "multiline": False,
+                    "default": "absouute-path"
+                })
             },
         }
 
@@ -131,18 +144,10 @@ class LoadImageFromText:
 
     CATEGORY = "RisuTools/image"
 
-    def load_image_from_text(self, name, prefix, directory : Literal["[input]", "[output]"], ):
-        image_path = None
-        match directory:
-            case "[input]":
-                image_path = os.path.join(folder_paths.get_output_directory(), prefix + name)
-            case "[output]":
-                image_path = os.path.join(folder_paths.get_output_directory(), prefix + name)
-            case _:
-                assert_never(directory)
+    def load_image_from_text(self, name, prefix, directory):
+        image_path = os.path.join(directory, prefix + name)
 
-
-        img = node_helpers.pillow(Image.open, image_path)
+        img = pillow(Image.open, image_path)
 
         output_images = []
         output_masks = []
@@ -151,7 +156,7 @@ class LoadImageFromText:
         excluded_formats = ['MPO']
 
         for i in ImageSequence.Iterator(img):
-            i = node_helpers.pillow(ImageOps.exif_transpose, i)
+            i = pillow(ImageOps.exif_transpose, i)
 
             if i.mode == 'I':
                 i = i.point(lambda i: i * (1 / 255))
@@ -188,7 +193,7 @@ class LoadImageFromText:
 
     @classmethod
     def IS_CHANGED(cls, name, prefix, directory):
-        image_path = folder_paths.get_annotated_filepath(prefix + name + " " + directory)
+        image_path = os.path.join(directory, prefix + name)
         m = hashlib.sha256()
         with open(image_path, 'rb') as f:
             m.update(f.read())
@@ -196,8 +201,9 @@ class LoadImageFromText:
 
     @classmethod
     def VALIDATE_INPUTS(cls, name, prefix, directory):
-        if not folder_paths.exists_annotated_filepath(prefix + name + " " + directory):
-            return "Invalid image file: {}".format(prefix + name + " " + directory)
+        image_path = os.path.join(directory, prefix + name)
+        if not os.path.exists(image_path):
+            return f"Invalid image file: {image_path}"
 
         return True
 
