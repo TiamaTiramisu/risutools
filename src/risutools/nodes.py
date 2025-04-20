@@ -108,7 +108,6 @@ class LoadImageFromText:
     @classmethod
     def INPUT_TYPES(cls):
         """
-            Return a dictionary which contains config for all input fields.
             It is almost the same as LoadImage: https://github.com/comfyanonymous/ComfyUI/blob/fd274944418f1148b762a6e2d37efa820a569071/nodes.py#L1641
         """
         return {
@@ -131,7 +130,7 @@ class LoadImageFromText:
 
     CATEGORY = "RisuTools/image"
 
-    def load_image_from_text(self, name, prefix, directory : Literal["[input]", "[output]"], ):
+    def load_image_from_text(self, name, prefix, directory : Literal["[input]", "[output]"]):
         image_path = None
         match directory:
             case "[input]":
