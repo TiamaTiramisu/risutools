@@ -297,6 +297,89 @@ class LoadLastFileNamePrefix:
 
         return True
 
+class CheckFileNamePrefixExists:
+    """
+    Checks if any files with the given prefix exist in the directory
+
+    Class methods
+    -------------
+    INPUT_TYPES (dict):
+        Tell the main program input parameters of nodes.
+
+    Attributes
+    ----------
+    RETURN_TYPES (`tuple`):
+        The type of each element in the output tuple.
+    RETURN_NAMES (`tuple`):
+        The name of each output in the output tuple.
+    FUNCTION (`str`):
+        The name of the entry-point method.
+    CATEGORY (`str`):
+        The category the node should appear in the UI.
+    """
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        """
+            Return a dictionary which contains config for all input fields.
+        """
+        return {
+            "required": {
+                "prefix": ("STRING", {
+                    "multiline": False,
+                    "default": "prefix"
+                }),
+                "directory": ("STRING", {
+                    "multiline": False,
+                    "default": "absolute-path"
+                })
+            },
+        }
+
+    RETURN_TYPES = ("BOOLEAN",)
+    RETURN_NAMES = ("exists",)
+    DESCRIPTION = cleandoc(__doc__ or "")
+    FUNCTION = "check_filename_exists"
+    CATEGORY = "RisuTools/File"
+
+    def check_filename_exists(self, prefix, directory):
+        """
+        Check if any files with the given prefix exist in the directory.
+
+        Parameters:
+        -----------
+        prefix : str
+            The prefix to search for in filenames
+        directory : str
+            The directory to search in
+
+        Returns:
+        --------
+        bool
+            True if at least one file with the prefix exists, False otherwise
+        """
+        if not os.path.exists(directory) or not os.path.isdir(directory):
+            return (False,)
+
+        for filename in os.listdir(directory):
+            if filename.startswith(prefix):
+                file_path = os.path.join(directory, filename)
+                if os.path.isfile(file_path):
+                    return (True,)
+
+        return (False,)
+
+    @classmethod
+    def VALIDATE_INPUTS(cls, _prefix, directory):
+        if not os.path.exists(directory):
+            return f"Directory does not exist: {directory}"
+
+        if not os.path.isdir(directory):
+            return f"Not a directory: {directory}"
+
+        return True
 
 
 
@@ -308,13 +391,16 @@ class LoadLastFileNamePrefix:
 NODE_CLASS_MAPPINGS = {
     "UUIDGenerator": UUIDGenerator,
     "LoadImageFromText" : LoadImageFromText,
-    "LoadLastFileNamePrefix" : LoadLastFileNamePrefix
+    "LoadLastFileNamePrefix" : LoadLastFileNamePrefix,
+    "CheckFileNamePrefixExists" : CheckFileNamePrefixExists
 }
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
     "UUIDGenerator": "UUID Generator",
     "LoadImageFromText" : "Load Image From Text",
-    "LoadLastFileNamePrefix" : "Load Last Filename from Prefix"
+    "LoadLastFileNamePrefix" : "LoadLastFileNamePrefix",
+    "CheckFileNamePrefixExists" : "CheckFileNamePrefixExists"
+
 }
 
