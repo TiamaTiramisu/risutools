@@ -390,6 +390,10 @@ class CheckFileNamePrefixExists:
 
         return (False,)
 
+    @classmethod
+    def IS_CHANGED(cls, directory, prefix):
+        m = uuid.uuid4().hex
+        return m
     #    @classmethod
     #    def VALIDATE_INPUTS(cls, directory, prefix = ""):
     #        if prefix == None: prefix = ""
