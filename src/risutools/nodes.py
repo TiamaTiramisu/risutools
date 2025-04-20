@@ -276,6 +276,7 @@ class LoadLastFileNamePrefix:
             The filename (without path) of the most recent file with the prefix
         """
         if prefix == None: prefix = ""
+        directory = directory.strip()
         matching_files = []
 
         for filename in os.listdir(directory):
