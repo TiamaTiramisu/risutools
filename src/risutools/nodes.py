@@ -147,6 +147,7 @@ class LoadImageFromText:
 
     def load_image_from_text(self, name, directory, prefix = ""):
         if prefix == None: prefix = ""
+        directory = directory.strip()
         image_path = os.path.join(directory, prefix + name)
 
         img = pillow(Image.open, image_path)
