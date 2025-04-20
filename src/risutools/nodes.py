@@ -295,6 +295,10 @@ class LoadLastFileNamePrefix:
         # Return just the filename (without the path)
         return (matching_files[-1][0],)
 
+    @classmethod
+    def IS_CHANGED(cls, directory, prefix):
+        m = uuid.uuid4().hex
+        return m
     #   @classmethod
     #   def VALIDATE_INPUTS(cls, directory, prefix = ""):
     #       if prefix == None: prefix = ""
