@@ -127,15 +127,17 @@ class LoadImageFromText:
                     "multiline": False,
                     "default": "image_name"
                 }),
-                "prefix": ("STRING", {
-                    "multiline": False,
-                    "default": ""
-                }),
                 "directory": ("STRING", {
                     "multiline": False,
                     "default": "absouute-path"
                 })
             },
+            "optional": {
+                "prefix": ("STRING", {
+                    "multiline": False,
+                    "default": ""
+                })
+            }
         }
 
     RETURN_TYPES = ("IMAGE","MASK")
@@ -192,7 +194,7 @@ class LoadImageFromText:
         return (output_image, output_mask)
 
     @classmethod
-    def IS_CHANGED(cls, name, prefix, directory):
+    def IS_CHANGED(cls, name, directory, prefix):
         if prefix == None: prefix = ""
         image_path = os.path.join(directory, prefix + name)
         m = hashlib.sha256()
@@ -201,7 +203,7 @@ class LoadImageFromText:
         return m.digest().hex()
 
     @classmethod
-    def VALIDATE_INPUTS(cls, name, prefix, directory):
+    def VALIDATE_INPUTS(cls, name, directory, prefix):
         if prefix == None: prefix = ""
         image_path = os.path.join(directory, prefix + name)
         if not os.path.exists(image_path):
@@ -239,15 +241,17 @@ class LoadLastFileNamePrefix:
         """
         return {
             "required": {
+                "directory": ("STRING", {
+                    "multiline": False,
+                    "default": "absolute-path"
+                })
+            },
+            "optional": {
                 "prefix": ("STRING", {
                     "multiline": False,
                     "default": ""
-                }),
-                "directory": ("STRING", {
-                    "multiline": False,
-                    "default": "absouute-path"
                 })
-            },
+            }
         }
 
     RETURN_TYPES = ("STRING", )
@@ -255,7 +259,7 @@ class LoadLastFileNamePrefix:
     FUNCTION = "load_filename"
     CATEGORY = "RisuTools/File"
 
-    def load_filename(self, prefix, directory):
+    def load_filename(self, directory, prefix):
         """
         Find the most recent file in the directory that starts with the given prefix.
 
@@ -290,7 +294,7 @@ class LoadLastFileNamePrefix:
         return (matching_files[-1][0],)
 
     @classmethod
-    def VALIDATE_INPUTS(cls, prefix, directory):
+    def VALIDATE_INPUTS(cls, directory, prefix):
         if prefix == None: prefix = ""
         if not os.path.exists(directory):
             return f"Directory does not exist: {directory}"
@@ -335,15 +339,16 @@ class CheckFileNamePrefixExists:
         """
         return {
             "required": {
-                "prefix": ("STRING", {
-                    "multiline": False,
-                    "default": ""
-                }),
                 "directory": ("STRING", {
                     "multiline": False,
                     "default": "absolute-path"
                 })
-            },
+            }, "optional": {
+                "prefix": ("STRING", {
+                    "multiline": False,
+                    "default": ""
+                })
+            }
         }
 
     RETURN_TYPES = ("BOOLEAN",)
@@ -352,7 +357,7 @@ class CheckFileNamePrefixExists:
     FUNCTION = "check_filename_exists"
     CATEGORY = "RisuTools/File"
 
-    def check_filename_exists(self, prefix, directory):
+    def check_filename_exists(self, directory, prefix):
         """
         Check if any files with the given prefix exist in the directory.
 
@@ -381,7 +386,7 @@ class CheckFileNamePrefixExists:
         return (False,)
 
     @classmethod
-    def VALIDATE_INPUTS(cls, prefix, directory):
+    def VALIDATE_INPUTS(cls, directory, prefix):
         if prefix == None: prefix = ""
         if not os.path.exists(directory):
             return f"Directory does not exist: {directory}"
