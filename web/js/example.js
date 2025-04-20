@@ -1,1 +1,1 @@
-console.log(app);
+console.log("Hello form risutools")
