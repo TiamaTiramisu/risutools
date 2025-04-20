@@ -247,7 +247,7 @@ class LoadLastFileNamePrefix:
             },
         }
 
-    RETURN_TYPES = ("STRING")
+    RETURN_TYPES = ("STRING", )
     DESCRIPTION = cleandoc(__doc__ or "")
     FUNCTION = "load_filename"
     CATEGORY = "RisuTools/File"
