@@ -129,7 +129,7 @@ class LoadImageFromText:
                 }),
                 "prefix": ("STRING", {
                     "multiline": False,
-                    "default": "prefix"
+                    "default": ""
                 }),
                 "directory": ("STRING", {
                     "multiline": False,
@@ -144,6 +144,7 @@ class LoadImageFromText:
     CATEGORY = "RisuTools/image"
 
     def load_image_from_text(self, name, prefix, directory):
+        if prefix == None: prefix = ""
         image_path = os.path.join(directory, prefix + name)
 
         img = pillow(Image.open, image_path)
@@ -192,6 +193,7 @@ class LoadImageFromText:
 
     @classmethod
     def IS_CHANGED(cls, name, prefix, directory):
+        if prefix == None: prefix = ""
         image_path = os.path.join(directory, prefix + name)
         m = hashlib.sha256()
         with open(image_path, 'rb') as f:
@@ -200,6 +202,7 @@ class LoadImageFromText:
 
     @classmethod
     def VALIDATE_INPUTS(cls, name, prefix, directory):
+        if prefix == None: prefix = ""
         image_path = os.path.join(directory, prefix + name)
         if not os.path.exists(image_path):
             return f"invalid image file: {image_path}"
@@ -238,7 +241,7 @@ class LoadLastFileNamePrefix:
             "required": {
                 "prefix": ("STRING", {
                     "multiline": False,
-                    "default": "prefix"
+                    "default": ""
                 }),
                 "directory": ("STRING", {
                     "multiline": False,
@@ -284,6 +287,7 @@ class LoadLastFileNamePrefix:
 
     @classmethod
     def VALIDATE_INPUTS(cls, prefix, directory):
+        if prefix == None: prefix = ""
         if not os.path.exists(directory):
             return f"Directory does not exist: {directory}"
 
@@ -329,7 +333,7 @@ class CheckFileNamePrefixExists:
             "required": {
                 "prefix": ("STRING", {
                     "multiline": False,
-                    "default": "prefix"
+                    "default": ""
                 }),
                 "directory": ("STRING", {
                     "multiline": False,
@@ -360,6 +364,7 @@ class CheckFileNamePrefixExists:
         bool
             True if at least one file with the prefix exists, False otherwise
         """
+        if prefix == None: prefix = ""
         if not os.path.exists(directory) or not os.path.isdir(directory):
             return (False,)
 
@@ -372,7 +377,8 @@ class CheckFileNamePrefixExists:
         return (False,)
 
     @classmethod
-    def VALIDATE_INPUTS(cls, _prefix, directory):
+    def VALIDATE_INPUTS(cls, prefix, directory):
+        if prefix == None: prefix = ""
         if not os.path.exists(directory):
             return f"Directory does not exist: {directory}"
 
