@@ -375,13 +375,16 @@ class CheckFileNamePrefixExists:
             True if at least one file with the prefix exists, False otherwise
         """
         if prefix == None: prefix = ""
+        directory = directory.strip()
         if not os.path.exists(directory) or not os.path.isdir(directory):
+            print(f"{not os.path.exists(directory)=} {not os.path.isdir(directory)}")
             return (False,)
 
         for filename in os.listdir(directory):
             if filename.startswith(prefix):
                 file_path = os.path.join(directory, filename)
                 if os.path.isfile(file_path):
+                    print(f"Found file path: {file_path}")
                     return (True,)
 
         return (False,)
