@@ -202,13 +202,13 @@ class LoadImageFromText:
             m.update(f.read())
         return m.digest().hex()
 
-    @classmethod
-    def VALIDATE_INPUTS(cls, name, directory, prefix = ""):
-        if prefix == None: prefix = ""
-        image_path = os.path.join(directory, prefix + name)
-        if not os.path.exists(image_path):
-            return f"invalid image file: {image_path}"
-        return True
+    #    @classmethod
+    #    def VALIDATE_INPUTS(cls, name, directory, prefix = ""):
+    #        if prefix == None: prefix = ""
+    #        image_path = os.path.join(directory, prefix + name)
+    #        if not os.path.exists(image_path):
+    #            return f"invalid image file: {image_path}"
+    #        return True
 
 class LoadLastFileNamePrefix:
     """
@@ -293,21 +293,21 @@ class LoadLastFileNamePrefix:
         # Return just the filename (without the path)
         return (matching_files[-1][0],)
 
-    @classmethod
-    def VALIDATE_INPUTS(cls, directory, prefix = ""):
-        if prefix == None: prefix = ""
-        if not os.path.exists(directory):
-            return f"Directory does not exist: {directory}"
+    #   @classmethod
+    #   def VALIDATE_INPUTS(cls, directory, prefix = ""):
+    #       if prefix == None: prefix = ""
+    #       if not os.path.exists(directory):
+    #           return f"Directory does not exist: {directory}"
 
-        if not os.path.isdir(directory):
-            return f"Not a directory: {directory}"
+    #       if not os.path.isdir(directory):
+    #           return f"Not a directory: {directory}"
 
-        matching_files = [f for f in os.listdir(directory) if f.startswith(prefix) and os.path.isfile(os.path.join(directory, f))]
+    #       matching_files = [f for f in os.listdir(directory) if f.startswith(prefix) and os.path.isfile(os.path.join(directory, f))]
 
-        if not matching_files:
-            return f"There is no matching file with prefix '{prefix}' in {directory}"
+    #       if not matching_files:
+    #           return f"There is no matching file with prefix '{prefix}' in {directory}"
 
-        return True
+    #       return True
 
 class CheckFileNamePrefixExists:
     """
@@ -385,16 +385,16 @@ class CheckFileNamePrefixExists:
 
         return (False,)
 
-    @classmethod
-    def VALIDATE_INPUTS(cls, directory, prefix = ""):
-        if prefix == None: prefix = ""
-        if not os.path.exists(directory):
-            return f"Directory does not exist: {directory}"
-
-        if not os.path.isdir(directory):
-            return f"Not a directory: {directory}"
-
-        return True
+    #    @classmethod
+    #    def VALIDATE_INPUTS(cls, directory, prefix = ""):
+    #        if prefix == None: prefix = ""
+    #        if not os.path.exists(directory):
+    #            return f"Directory does not exist: {directory}"
+    #
+    #        if not os.path.isdir(directory):
+    #            return f"Not a directory: {directory}"
+    #
+    #        return True
 
 
 
