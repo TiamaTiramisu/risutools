@@ -271,6 +271,7 @@ class LoadLastFileNamePrefix:
         str
             The filename (without path) of the most recent file with the prefix
         """
+        if prefix == None: prefix = ""
         matching_files = []
 
         for filename in os.listdir(directory):
@@ -278,6 +279,9 @@ class LoadLastFileNamePrefix:
                 file_path = os.path.join(directory, filename)
                 if os.path.isfile(file_path):
                     matching_files.append((filename, os.path.getmtime(file_path)))
+
+        if not matching_files:
+            raise ValueError(f"No files found with prefix '{prefix}' in {directory}")
 
         # Sort by modification time (newest last)
         matching_files.sort(key=lambda x: x[1])
@@ -405,8 +409,7 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "UUIDGenerator": "UUID Generator",
     "LoadImageFromText" : "Load Image From Text",
-    "LoadLastFileNamePrefix" : "LoadLastFileNamePrefix",
-    "CheckFileNamePrefixExists" : "CheckFileNamePrefixExists"
-
+    "LoadLastFileNamePrefix" : "Load Last File Name Prefix",
+    "CheckFileNamePrefixExists" : "Check File Name Prefix Exists"
 }
 
